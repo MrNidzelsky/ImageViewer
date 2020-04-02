@@ -95,9 +95,12 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tqL-aT-mYk">
                                 <rect key="frame" x="10" y="800" width="748" height="204"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dkP-u1-uHw">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dkP-u1-uHw">
                                         <rect key="frame" x="8" y="23" width="176" height="159"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="176" id="Nwb-ar-Rkb"/>
+                                            <constraint firstAttribute="height" constant="159" id="rHf-p0-Ii5"/>
+                                        </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bxb-Ba-ibZ">
                                         <rect key="frame" x="192" y="22" width="519" height="87"/>
@@ -118,7 +121,10 @@
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemGrayColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
+                                    <constraint firstItem="dkP-u1-uHw" firstAttribute="leading" secondItem="tqL-aT-mYk" secondAttribute="leading" constant="8" id="2Zf-RB-YU5"/>
                                     <constraint firstAttribute="height" constant="204" id="L96-Lr-Ta4"/>
+                                    <constraint firstAttribute="bottom" secondItem="dkP-u1-uHw" secondAttribute="bottom" constant="22" id="Ma5-3f-OYb"/>
+                                    <constraint firstItem="dkP-u1-uHw" firstAttribute="top" secondItem="tqL-aT-mYk" secondAttribute="top" constant="23" id="V9u-up-uK3"/>
                                 </constraints>
                             </view>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c7a-SF-4og">
