@@ -17,6 +17,7 @@
 		8F882149242D6F81004DAD04 /* PhotoViewer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8F882147242D6F81004DAD04 /* PhotoViewer.xcdatamodeld */; };
 		8F88214B242D6F84004DAD04 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F88214A242D6F84004DAD04 /* Assets.xcassets */; };
 		8F88214E242D6F84004DAD04 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F88214C242D6F84004DAD04 /* LaunchScreen.storyboard */; };
+		8F9C84F32439F065006C5A5A /* ImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C84F22439F065006C5A5A /* ImageExtension.swift */; };
 		8FAA9D462434B6A8007EA541 /* HttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAA9D452434B6A8007EA541 /* HttpService.swift */; };
 		8FFDA038242FE24E0046CF5A /* PhotoListCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFDA037242FE24E0046CF5A /* PhotoListCollectionViewController.swift */; };
 		8FFDA03A242FE5A00046CF5A /* UnsplashClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFDA039242FE5A00046CF5A /* UnsplashClient.swift */; };
@@ -38,6 +39,7 @@
 		8F88214A242D6F84004DAD04 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F88214D242D6F84004DAD04 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F88214F242D6F84004DAD04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F9C84F22439F065006C5A5A /* ImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtension.swift; sourceTree = "<group>"; };
 		8FAA9D452434B6A8007EA541 /* HttpService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpService.swift; sourceTree = "<group>"; };
 		8FFDA037242FE24E0046CF5A /* PhotoListCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCollectionViewController.swift; sourceTree = "<group>"; };
 		8FFDA039242FE5A00046CF5A /* UnsplashClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashClient.swift; sourceTree = "<group>"; };
@@ -121,9 +123,10 @@
 		8F882156242DB344004DAD04 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				8F88214C242D6F84004DAD04 /* LaunchScreen.storyboard */,
-				8F882144242D6F81004DAD04 /* Main.storyboard */,
 				8F1C0D482431A80C006DA011 /* PhotoListCell.swift */,
+				8F9C84F22439F065006C5A5A /* ImageExtension.swift */,
+				8F882144242D6F81004DAD04 /* Main.storyboard */,
+				8F88214C242D6F84004DAD04 /* LaunchScreen.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 				8FFDA03C242FE6BE0046CF5A /* SearchResults.swift in Sources */,
 				8F20BEBF24356C74000A9C6B /* ImageSaver.swift in Sources */,
 				8F882141242D6F81004DAD04 /* SceneDelegate.swift in Sources */,
+				8F9C84F32439F065006C5A5A /* ImageExtension.swift in Sources */,
 				8F1C0D492431A80C006DA011 /* PhotoListCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

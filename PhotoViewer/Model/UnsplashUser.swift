@@ -43,12 +43,9 @@ struct UnsplashUser: Codable {
         self.twitterUsername = try? container.decode(String.self, forKey: .twitterUsername)
         self.portfolioURL = try? container.decode(String.self, forKey: .portfolioURL)
     
-        
         self.profileImage = try? container.decode(ProfileImage.self, forKey: .profileImage)
     }
 }
-
-
 
 
 // MARK: - UserLinks

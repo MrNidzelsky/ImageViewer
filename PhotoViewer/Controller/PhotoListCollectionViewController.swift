@@ -17,11 +17,13 @@ protocol PhotoListCollectionVCProtocol: AnyObject {
 
 final class PhotoListCollectionViewController: UICollectionViewController {
     
-    private let reuseIdentifier = "PhotoCell"
-    private let sectionInsets = UIEdgeInsets(top: 50.0,
-                                             left: 20.0,
-                                             bottom: 50.0,
-                                             right: 20.0)
+    // cell identifiers
+    private let reuseIdentifierAlbum    = "AlbumPhotoCell"
+    private let reuseIdentifierPortrait = "PortraitPhotoCell"
+    
+    private var searchTerm = ""
+    private var currentPage = 1
+    private var totalPages = 1
     
     // array with search results
     private var searches: [SearchResults] = []
@@ -29,9 +31,8 @@ final class PhotoListCollectionViewController: UICollectionViewController {
     // unsplash related
     private let unsplash = UnsplashClient()
     
-    private var searchTerm = ""
-    private var currentPage = 1
-    private var totalPages = 1
+    // cache
+    var imagesCache = [String:UIImage]()
 }
 
 
@@ -42,15 +43,19 @@ private extension PhotoListCollectionViewController {
     }
     
     func searchByTerm(string: String, andPageNum: Int) {
-        print("searchByTerm : \(string) andPageNum \(andPageNum)")
+        // show activity indicator
+        let activityView = UIActivityIndicatorView(style: .large)
+        self.view.addSubview(activityView)
+        activityView.hidesWhenStopped = true
+        activityView.center = self.view.center
+        activityView.startAnimating()
+        
         // search for text
         unsplash.searchUnsplash(for: string, pageNumber: andPageNum) { searchResults in
             switch searchResults {
             case .error(let error) :
                 print("Error Searching: \(error)")
             case .results(let results):
-                print("Found \(String(describing: results.searchResults?.count)) matching \(self.searchTerm)")
-                
                 // save results and reload collection view
                 self.searches.insert(results, at: self.searches.count)
                 self.totalPages = results.totalPages
@@ -58,20 +63,18 @@ private extension PhotoListCollectionViewController {
                 
                 // update view
                 self.collectionView?.reloadData()
+                activityView.stopAnimating()
             }
         }
     }
     
-    
     @objc func loadNextSearchItems() {
+        // increment page number
         if self.currentPage < self.totalPages {
-            // increment page number
-            if self.currentPage < self.totalPages {
-                self.currentPage += 1
-                
-                // load next page
-                self.searchByTerm(string: self.searchTerm, andPageNum: self.currentPage)
-            }
+            self.currentPage += 1
+            
+            // load next page
+            self.searchByTerm(string: self.searchTerm, andPageNum: self.currentPage)
         }
     }
 }
@@ -86,6 +89,7 @@ extension PhotoListCollectionViewController : UITextFieldDelegate {
         currentPage = 1
         totalPages  = 1
         searches.removeAll()
+        imagesCache.removeAll()
         
         // first page by default
         searchByTerm(string: textField.text!, andPageNum: currentPage)
@@ -97,19 +101,33 @@ extension PhotoListCollectionViewController : UITextFieldDelegate {
 }
 
 
-/*
+
 // MARK: - UICollectionViewDelegateFlowLayout
 extension PhotoListCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         // retrive unsplash photo
-        let unsplashPhoto = photo(for: indexPath)
+        if let unsplashPhoto = photo(for: indexPath) {
+            // check if square or album shape
+            if unsplashPhoto.width >= unsplashPhoto.height {
+                return CGSize(width: 180, height: 120)
+            } else {
+                return CGSize(width: 120, height: 200)
+            }
+        }
         
-        return CGSize(width: unsplashPhoto.width, height: unsplashPhoto.height)
+        // default
+        return CGSize(width: 200, height: 200)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 20.0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 10.0
     }
 }
- */
-
 
 
 // MARK: - UICollectionViewDataSource
@@ -127,19 +145,34 @@ extension PhotoListCollectionViewController {
   
     override func collectionView(_ collectionView: UICollectionView,
                                  cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier:reuseIdentifier,
-                                                      for: indexPath) as! PhotoListCell
-    
-        // TODO: replace
         // retrive unsplash photo
-        let unsplashPhoto = photo(for: indexPath)
-    
-        if let imageUrl = unsplashPhoto?.unsplashThumbImageURL() {
-            cell.imageView.load(url: imageUrl)
-            
-            let name = unsplashPhoto?.user.name ?? "n/a"
-            let desc = unsplashPhoto?.description ?? ""
-            
+        guard let unsplashPhoto = photo(for: indexPath)
+            else {
+                return UICollectionViewCell()
+        }
+        
+        // check if square or album shape
+        let cellIdentifier = unsplashPhoto.width >= unsplashPhoto.height ? reuseIdentifierAlbum : reuseIdentifierPortrait
+        
+        // create cell with require identifier
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier:cellIdentifier,
+        for: indexPath) as! PhotoListCell
+        
+        // get image thumb url
+        if let imageUrl = unsplashPhoto.unsplashThumbImageURL() {
+            // check if image cached already
+            if let cachedImage = imagesCache["\(unsplashPhoto.urls.thumb ?? "")"] {
+                // use image from cache
+                cell.imageView.image = cachedImage
+            } else {
+                // load and cache image from url
+                cell.imageView.load(url: imageUrl) { (image) in
+                    self.imagesCache[imageUrl.absoluteString] = image
+                }
+            }
+                    
+            let name = unsplashPhoto.user.name ?? "n/a"
+            let desc = unsplashPhoto.description ?? ""
             cell.photoDescriptionLabel.text =  name + "\n" + desc
         }
 
@@ -148,7 +181,7 @@ extension PhotoListCollectionViewController {
 }
 
 
-// MARK: - UICollectionView Delegate
+// MARK: - UICollectionViewDelegate
 extension PhotoListCollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -164,32 +197,15 @@ extension PhotoListCollectionViewController {
     
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.item == (searches[indexPath.section].searchResults?.count ?? 1) - 1 {
-            loadNextSearchItems()
+        guard
+            indexPath.section == searches.count - 1,
+            indexPath.item == (searches[indexPath.section].searchResults?.count ?? 1) - 1
+            else {
+                return
         }
+
+        // load more itrems
+        loadNextSearchItems()
     }
 }
 
-// TODO: replace to separate Extension file
-extension UIImageView {
-    
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
-    }
-    
-    func makeRounded() {
-        self.layer.borderWidth = 8
-        self.layer.masksToBounds = false
-        self.layer.borderColor = UIColor.white.cgColor
-        self.layer.cornerRadius = self.frame.height / 2
-        self.clipsToBounds = true
-    }
-}

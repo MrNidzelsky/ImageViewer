@@ -28,13 +28,13 @@ class PhotoDetailsViewController: UIViewController, UIScrollViewDelegate {
         userProfileImage.makeRounded()
         
         scrollView.minimumZoomScale = 1.0
-        scrollView.maximumZoomScale = 6.0
+        scrollView.maximumZoomScale = 4.0
         scrollView.addSubview(photoImageView)
         
         guard
             let photo = self.unsplashPhoto,
             let photoUrl = photo.unsplashRegularImageURL()
-        else {return}
+        else { return }
         
         photoImageView.load(url: photoUrl)
         

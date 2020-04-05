@@ -26,7 +26,6 @@ class HttpService {
         // add header fields
         for headerField in headers.keys {
             if let value = headers[headerField] {
-                print("add value = \(value) to headerField \(headerField)")
                 urlRequest.addValue(value, forHTTPHeaderField: headerField)
             }
         }
