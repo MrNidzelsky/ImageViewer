@@ -17,6 +17,7 @@ class PhotoDetailsViewController: UIViewController, UIScrollViewDelegate {
     // profile related
     @IBOutlet weak var userProfileImage: UIImageView!
     @IBOutlet weak var userInfoLabel: UILabel!
+    @IBOutlet weak var photoDescriptionLabel: UILabel!
     
     var unsplashPhoto: UnsplashPhoto?
     
@@ -25,11 +26,10 @@ class PhotoDetailsViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        userProfileImage.makeRounded()
+        userProfileImage?.makeRounded()
         
         scrollView.minimumZoomScale = 1.0
-        scrollView.maximumZoomScale = 4.0
-        scrollView.addSubview(photoImageView)
+        scrollView.maximumZoomScale = 3.0
         
         guard
             let photo = self.unsplashPhoto,
@@ -40,14 +40,39 @@ class PhotoDetailsViewController: UIViewController, UIScrollViewDelegate {
         
         // TODO: replace image loading
         // init user info view
-        if let linkStr = photo.user.profileImage?.small,
+        if let linkStr = photo.user.profileImage?.medium,
             let userImage = URL(string: linkStr) {
-            userProfileImage.load(url: userImage)
+            userProfileImage?.load(url: userImage)
         }
 
-        // init label
-        userInfoLabel?.text = "Instagram: \(photo.user.instagramUsername ?? "")"
+        var userInfoString = String()
+        
+        // add user name
+        if let username = photo.user.name {
+            userInfoString += username
+        }
+        
+        // add instagram username
+        if let instagramUsername = photo.user.instagramUsername {
+            userInfoString += "\nInstagram account: \(instagramUsername)"
+        }
+        
+        // init userinfo label
+        userInfoLabel?.text = userInfoString
+        
+        // init photo description label
+        var photoDescriptionString = String()
+        if let photoDescription = photo.description {
+            photoDescriptionString += photoDescription
+        }
+        
+        if let locatonInfo = photo.location {
+            photoDescriptionString += "\nLocation: \(locatonInfo)"
+        }
+        
+        photoDescriptionLabel?.text = photoDescriptionString
     }
+    
     
     func initWithPhoto(_ photo: UnsplashPhoto) {
         self.unsplashPhoto = photo

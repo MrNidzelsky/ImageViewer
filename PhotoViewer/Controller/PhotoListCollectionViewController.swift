@@ -33,6 +33,8 @@ final class PhotoListCollectionViewController: UICollectionViewController {
     
     // cache
     var imagesCache = [String:UIImage]()
+    
+    var activityIndicator: UIActivityIndicatorView?
 }
 
 
@@ -44,16 +46,13 @@ private extension PhotoListCollectionViewController {
     
     func searchByTerm(string: String, andPageNum: Int) {
         // show activity indicator
-        let activityView = UIActivityIndicatorView(style: .large)
-        self.view.addSubview(activityView)
-        activityView.hidesWhenStopped = true
-        activityView.center = self.view.center
-        activityView.startAnimating()
+        self.showActivityIndicator(show: true)
         
         // search for text
         unsplash.searchUnsplash(for: string, pageNumber: andPageNum) { searchResults in
             switch searchResults {
             case .error(let error) :
+                self.showActivityIndicator(show: false)
                 print("Error Searching: \(error)")
             case .results(let results):
                 // save results and reload collection view
@@ -63,10 +62,24 @@ private extension PhotoListCollectionViewController {
                 
                 // update view
                 self.collectionView?.reloadData()
-                activityView.stopAnimating()
+                self.showActivityIndicator(show: false)
             }
         }
     }
+    
+    func showActivityIndicator(show: Bool) {
+        if show {
+            activityIndicator = UIActivityIndicatorView(style: .large)
+            self.view.addSubview(activityIndicator!)
+            activityIndicator?.hidesWhenStopped = true
+            activityIndicator?.center = self.view.center
+            activityIndicator?.startAnimating()
+        } else {
+            activityIndicator?.stopAnimating()
+            activityIndicator?.removeFromSuperview()
+        }
+    }
+    
     
     @objc func loadNextSearchItems() {
         // increment page number
@@ -118,14 +131,6 @@ extension PhotoListCollectionViewController: UICollectionViewDelegateFlowLayout 
         
         // default
         return CGSize(width: 200, height: 200)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 20.0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10.0
     }
 }
 

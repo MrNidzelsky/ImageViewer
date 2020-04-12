@@ -32,6 +32,7 @@ final class UnsplashPhoto: Codable, Equatable {
     let urls: Urls
     
     // TODO: add property for "location" field
+    let location: String?
     
     // MARK: - Decodable
      init(from decoder: Decoder) throws {
@@ -46,10 +47,12 @@ final class UnsplashPhoto: Codable, Equatable {
  
         self.user = try! container.decode(UnsplashUser.self, forKey: .user)
         self.description = try? container.decode(String.self, forKey: .description)
+        
+        self.location = try? container.decode(String.self, forKey: .location)
      }
   
     init (photoID: String, links: ResultLinks, urls: Urls, width: Int,
-          height: Int, description: String, user: UnsplashUser) {
+          height: Int, description: String, user: UnsplashUser, location: String) {
         self.photoID     = photoID
         self.links       = links
         self.urls        = urls
@@ -57,6 +60,7 @@ final class UnsplashPhoto: Codable, Equatable {
         self.height      = height
         self.description = description
         self.user        = user
+        self.location    = location
     }
     
     // return url to regular
@@ -98,6 +102,7 @@ fileprivate extension  UnsplashPhoto {
         case description
         case user
         case urls
+        case location
     }
 }
 
